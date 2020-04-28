@@ -17,13 +17,15 @@
           
           <router-link class="nav-link" to="/cart">Cart <b-badge variant="warning">{{ cartCount }}</b-badge></router-link>
 
-          <b-nav-item-dropdown right>
+          <b-nav-item-dropdown right v-if="isLogged">
             <!-- Using 'button-content' slot -->
             <template v-slot:button-content>
-              <em>User</em>
+              <em>Admin</em>
             </template>
-            <b-dropdown-item href="#">Sign Out</b-dropdown-item>
+            <b-dropdown-item href="#" @click.prevent="logout">Sign Out</b-dropdown-item>
           </b-nav-item-dropdown>
+          
+          <router-link v-else to="login" class="nav-link">Login</router-link>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
@@ -33,12 +35,27 @@
 </template>
 
 <script>
+import Cookies from 'js-cookie';
+
 export default {
   name: "App",
+
+  data() {
+    return {
+      get isLogged() {
+        return Cookies.get("auth") === "1";
+      }
+    };
+  },
 
   methods: {
     changeCurrency(newCurrency) {
       this.$store.dispatch('onChangeCurrency', newCurrency)
+    },
+
+    logout() {
+      this.$store.dispatch("logout");
+      this.$router.push({ path: "login" });
     }
   },
 

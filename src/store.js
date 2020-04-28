@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import Cookies from 'js-cookie';
 
 Vue.use(Vuex);
 Vue.use(VueAxios, axios)
@@ -87,6 +88,14 @@ const store = new Vuex.Store({
 
     SET_DELIVERY_COST(state, value) {
       state.deliveryCost = value
+    },
+
+    LOGIN() {
+      Cookies.set('auth', '1')
+    },
+
+    LOGOUT() {
+      Cookies.remove('auth')
     }
   },
 
@@ -161,7 +170,24 @@ const store = new Vuex.Store({
         .catch(() => {
           commit('SET_DELIVERY_COST', 10)
         })
-    }
+    },
+
+    login({commit}, form) {
+      return new Promise((resolve, reject) => {
+        form.post('login')
+          .then(() => {
+            commit('LOGIN')
+            resolve();
+          })
+          .catch(error => {
+            reject(error);
+          });
+      });
+    },
+
+    logout({commit}) {
+      commit('LOGOUT')
+    },
   },
 
   getters: {

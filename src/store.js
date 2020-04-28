@@ -14,7 +14,10 @@ const store = new Vuex.Store({
       data: []
     },
     cart: [],
-    currency: 'euro'
+    currency: 'euro',
+    orderConfirmed: false,
+    thankYouMessage: false,
+    deliveryCost: 0
   },
 
   mutations: {
@@ -68,6 +71,22 @@ const store = new Vuex.Store({
 
     SET_CURRENCY(state, newCurrency) {
       state.currency = newCurrency
+    },
+
+    SET_ORDER_CONFIRMED(state, value) {
+      state.orderConfirmed = value
+    },
+
+    EMPTY_CART(state) {
+      state.cart = []
+    },
+
+    SHOW_THANK_YOU_MESSAGE(state) {
+      state.thankYouMessage = true
+    },
+
+    SET_DELIVERY_COST(state, value) {
+      state.deliveryCost = value
     }
   },
 
@@ -79,8 +98,8 @@ const store = new Vuex.Store({
           commit('INIT_CART', response.data.data)
           commit('SYNC_CART_FROM_STORAGE')
         })
-        .catch(error => {
-          console.log(error)
+        .catch(() => {
+          //
         })
     },
 
@@ -114,6 +133,34 @@ const store = new Vuex.Store({
       pizzas['data'] = updatedPizzas
 
       commit('SET_PIZZAS', pizzas)
+    },
+
+    async onSubmitCheckout({commit, getters}, form) {
+      form['cart_items'] = getters.cartItems
+      form['currency'] = getters.currency
+
+      const response = await Vue.axios.post('orders', form)
+
+      if (response.status === 201) {
+        commit('SET_ORDER_CONFIRMED', true)
+      }
+    },
+
+    onCartClear({commit}) {
+      commit('EMPTY_CART')
+      commit('SYNC_STORAGE_FROM_CART')
+      commit('SET_ORDER_CONFIRMED', false)
+      commit('SHOW_THANK_YOU_MESSAGE', true)
+    },
+
+    async onLoadCart({commit}) {
+      await Vue.axios.get('settings')
+        .then(response => {
+          commit('SET_DELIVERY_COST', response.data.delivery_cost)
+        })
+        .catch(() => {
+          commit('SET_DELIVERY_COST', 10)
+        })
     }
   },
 
@@ -146,6 +193,30 @@ const store = new Vuex.Store({
       if (state.currency === 'usd') {
         return '$'
       }
+    },
+
+    orderConfirmed: state => {
+      return state.orderConfirmed
+    },
+
+    thankYouMessage: state => {
+      return state.thankYouMessage
+    },
+
+    deliveryCost: state => {
+      return state.deliveryCost
+    },
+
+    getCartTotalPrice: (state, getters) => {
+      let totalPrice = 0
+
+      getters.cartItems.forEach(cartItem => {
+        totalPrice += (cartItem.quantity * state.pizzas.data.find(item => item.id === cartItem.pizzaId).price)
+      })
+
+      totalPrice += state.deliveryCost
+
+      return totalPrice.toFixed(2)
     }
   }
 });

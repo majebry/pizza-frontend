@@ -1,18 +1,21 @@
 <template>
   <div id="app">
     <b-navbar toggleable="lg" type="dark" variant="info" class="mb-4">
-      <b-navbar-brand href="#">PizzaWorld</b-navbar-brand>
+      <b-navbar-brand href="/">BuzzyPizza</b-navbar-brand>
 
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
-          <b-nav-item href="#">Home</b-nav-item>
+          <router-link class="nav-link" to="/">Home</router-link>
         </b-navbar-nav>
 
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
-          <b-nav-item href="#">Cart</b-nav-item>
+          <b-button v-if="currency === 'euro'" variant="link" class="nav-link" @click="changeCurrency('usd')">USD <b-badge>$</b-badge></b-button>
+          <b-button v-if="currency === 'usd'" variant="link" class="nav-link" @click="changeCurrency('euro')">Euro <b-badge>€</b-badge></b-button>
+          
+          <router-link class="nav-link" to="/cart">Cart <b-badge variant="warning">{{ cartCount }}</b-badge></router-link>
 
           <b-nav-item-dropdown right>
             <!-- Using 'button-content' slot -->
@@ -31,7 +34,23 @@
 
 <script>
 export default {
-  name: "App"
+  name: "App",
+
+  methods: {
+    changeCurrency(newCurrency) {
+      this.$store.dispatch('onChangeCurrency', newCurrency)
+    }
+  },
+
+  computed: {
+    cartCount() {
+      return this.$store.getters.cartCount
+    },
+
+    currency() {
+      return this.$store.getters.currency
+    }
+  }
 };
 </script>
 

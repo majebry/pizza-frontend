@@ -20,7 +20,8 @@ const store = new Vuex.Store({
     thankYouMessage: false,
     deliveryCost: 0,
     orders: [],
-    order: {}
+    order: {},
+    checkoutLoading: false
   },
 
   mutations: {
@@ -106,6 +107,10 @@ const store = new Vuex.Store({
 
     SET_ORDER(state, order) {
       state.order = order
+    },
+
+    SET_CHECKOUT_LOADING(state, value) {
+      state.checkoutLoading = value
     }
   },
 
@@ -155,6 +160,8 @@ const store = new Vuex.Store({
     },
 
     async onSubmitCheckout({commit, getters}, form) {
+      commit('SET_CHECKOUT_LOADING', true)
+      
       form['cart_items'] = getters.cartItems
       form['currency'] = getters.currency
 
@@ -163,6 +170,8 @@ const store = new Vuex.Store({
       if (response.status === 201) {
         commit('SET_ORDER_CONFIRMED', true)
       }
+
+      commit('SET_CHECKOUT_LOADING', false)
     },
 
     onCartClear({commit}) {
@@ -284,6 +293,10 @@ const store = new Vuex.Store({
 
     order: state => {
       return state.order
+    },
+
+    checkoutLoading: state => {
+      return state.checkoutLoading
     }
   }
 });

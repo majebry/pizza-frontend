@@ -3,6 +3,7 @@
     id="checkout" ref="checkoutModal"
     title="Checkout" ok-title="Confirm Order"
     @ok.prevent="submitCheckout"
+    :ok-disabled="checkoutLoading"
   >
     <b-alert variant="warning" show>
       <strong>Order Cost: {{ getCartTotalPrice }}</strong>
@@ -70,6 +71,10 @@ export default {
     cartItems() {
       return this.$store.getters.cartItems
     },
+
+    checkoutLoading() {
+      return this.$store.getters.checkoutLoading
+    }
   }
 }
 </script>

@@ -9,6 +9,7 @@
             <th>Sold Quantity</th>
           </tr>
           <tr v-for="item in order.items" :key="item.id">
+            <td>{{ item.pizza.name }}</td>
             <td>{{ item.sold_price }}</td>
             <td>{{ item.quantity }}</td>
           </tr>

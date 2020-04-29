@@ -3,7 +3,7 @@
     <div class="row justify-content-center">
       <div class="col-md-6">
         <div class="card">
-          <div class="card-header">Login</div>
+          <div class="card-header">Admin Login</div>
 
           <div class="card-body">
             <b-alert variant="danger" :show="errorMessage">Make sure your credentials are valid</b-alert>

@@ -26,7 +26,7 @@
             <b-dropdown-item href="#" @click.prevent="logout">Sign Out</b-dropdown-item>
           </b-nav-item-dropdown>
           
-          <router-link v-else to="login" class="nav-link">Login</router-link>
+          <router-link v-else to="login" class="nav-link">Admin Login</router-link>
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>

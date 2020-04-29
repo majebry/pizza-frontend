@@ -3,7 +3,7 @@
     <b-card title="Home">
       <b-card-body>
         <b-row id="pizzas">
-          <b-col lg="3" md="6" v-for="pizza in pizzas.data" :key="pizza.id" class="mb-2 mt-2">
+          <b-col lg="4" md="6" v-for="pizza in pizzas.data" :key="pizza.id" class="mb-2 mt-2">
             <b-card 
               img-top
               :img-src="pizza.image_link"
@@ -61,7 +61,7 @@ export default {
     return {
       currentPage: 1,
       rows: 0,
-      perPage: 8
+      perPage: 9
     }
   },
 

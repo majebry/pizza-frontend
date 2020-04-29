@@ -18,7 +18,9 @@ const store = new Vuex.Store({
     currency: 'euro',
     orderConfirmed: false,
     thankYouMessage: false,
-    deliveryCost: 0
+    deliveryCost: 0,
+    orders: [],
+    order: {}
   },
 
   mutations: {
@@ -90,12 +92,20 @@ const store = new Vuex.Store({
       state.deliveryCost = value
     },
 
-    LOGIN() {
-      Cookies.set('auth', '1')
+    LOGIN(state, response) {
+      Cookies.set('token', response.access_token)
     },
 
     LOGOUT() {
-      Cookies.remove('auth')
+      Cookies.remove('token')
+    },
+
+    SET_ORDERS(state, orders) {
+      state.orders = orders
+    },
+
+    SET_ORDER(state, order) {
+      state.order = order
     }
   },
 
@@ -175,8 +185,8 @@ const store = new Vuex.Store({
     login({commit}, form) {
       return new Promise((resolve, reject) => {
         form.post('login')
-          .then(() => {
-            commit('LOGIN')
+          .then(response => {
+            commit('LOGIN', response)
             resolve();
           })
           .catch(error => {
@@ -188,6 +198,29 @@ const store = new Vuex.Store({
     logout({commit}) {
       commit('LOGOUT')
     },
+
+    async onLoadOrders({commit}, params) {
+      await Vue.axios.get('orders', { 
+        params,
+        headers: {
+          Authorization: 'Bearer ' + Cookies.get('token')
+        }
+      })
+        .then(response => {
+          commit('SET_ORDERS', response.data)
+        })
+    },
+
+    async onLoadOrder({commit}, id) {
+      await Vue.axios.get('orders/' + id, {
+        headers: {
+          Authorization: 'Bearer ' + Cookies.get('token')
+        }
+      })
+        .then(response => {
+          commit('SET_ORDER', response.data)
+        })
+    }
   },
 
   getters: {
@@ -243,6 +276,14 @@ const store = new Vuex.Store({
       totalPrice += state.deliveryCost
 
       return totalPrice.toFixed(2)
+    },
+
+    orders: state => {
+      return state.orders
+    },
+
+    order: state => {
+      return state.order
     }
   }
 });

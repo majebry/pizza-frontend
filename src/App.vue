@@ -1,21 +1,22 @@
 <template>
-  <div id="app">
+  <div id="app" class="mb-4">
     <b-navbar toggleable="lg" type="dark" variant="info" class="mb-4">
-      <b-navbar-brand href="/">BuzzyPizza</b-navbar-brand>
+      <b-navbar-brand to="/">PizzaWorld</b-navbar-brand>
 
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
           <router-link class="nav-link" to="/">Home</router-link>
+          <router-link class="nav-link" to="/cart">Cart <b-badge variant="warning">{{ cartCount }}</b-badge></router-link>
+          
+          <b-button v-b-tooltip.hover title="Change Currency To" v-if="currency === 'euro'" variant="link" class="nav-link" @click="changeCurrency('usd')">USD <b-badge>$</b-badge></b-button>
+          <b-button v-b-tooltip.hover title="Change Currency To" v-if="currency === 'usd'" variant="link" class="nav-link" @click="changeCurrency('euro')">Euro <b-badge>€</b-badge></b-button>
         </b-navbar-nav>
 
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
-          <b-button v-if="currency === 'euro'" variant="link" class="nav-link" @click="changeCurrency('usd')">USD <b-badge>$</b-badge></b-button>
-          <b-button v-if="currency === 'usd'" variant="link" class="nav-link" @click="changeCurrency('euro')">Euro <b-badge>€</b-badge></b-button>
-          
-          <router-link class="nav-link" to="/cart">Cart <b-badge variant="warning">{{ cartCount }}</b-badge></router-link>
+          <router-link v-show="isLogged" class="nav-link" to="/orders">Orders</router-link>
 
           <b-nav-item-dropdown right v-if="isLogged">
             <!-- Using 'button-content' slot -->
@@ -43,7 +44,7 @@ export default {
   data() {
     return {
       get isLogged() {
-        return Cookies.get("auth") === "1";
+        return Cookies.get("token");
       }
     };
   },

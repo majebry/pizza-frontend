@@ -73,7 +73,7 @@ export default {
     async loadPizzas(params) {
       await this.$store.dispatch('onLoadPizzas', params)
 
-      this.$store.dispatch('onChangeCurrency', 'euro')
+      this.$store.dispatch('onChangeCurrency', this.currency)
 
       this.currentPage = this.pizzas.current_page
       this.rows = this.pizzas.total

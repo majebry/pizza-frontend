@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <b-card title="Home">
+    <b-card title="Home" v-if="! isLoading">
       <b-card-body>
         <b-row id="pizzas">
           <b-col lg="4" md="6" v-for="pizza in pizzas.data" :key="pizza.id" class="mb-2 mt-2">
@@ -50,6 +50,8 @@
         </b-pagination>
       </template>
     </b-card>
+
+    <p v-else class="text-warning">Loading...</p>
   </b-container>
 </template>
 
@@ -117,6 +119,10 @@ export default {
 
     currencySign() {
       return this.$store.getters.currencySign
+    },
+
+    isLoading() {
+      return this.$store.getters.isLoading
     }
   }
 }

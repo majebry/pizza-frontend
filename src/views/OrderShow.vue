@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <b-card :title="'Order #' + this.id">
+    <b-card :title="'Order #' + this.id" v-if="! isLoading">
       <div class="row">
         <table class="table">
           <tr>
@@ -50,6 +50,8 @@
         </div>
       </template>
     </b-card>
+
+    <p v-else class="text-warning">Loading...</p>
   </b-container>
 </template>
 
@@ -72,6 +74,10 @@ export default {
   computed: {
     order() {
       return this.$store.getters.order
+    },
+
+    isLoading() {
+      return this.$store.getters.isLoading
     }
   }
 }

@@ -1,44 +1,48 @@
 <template>
   <b-container>
-    <b-alert :show="rows < 1">There are no orders yet!</b-alert>
-    
-    <b-card class="mb-4" sub-title="Filter">
-      <b-row>
-        <b-col>
-          <b-form-group label="Client Name">
-            <b-form-input v-model="filters.clientName" @change="filterResults"></b-form-input>
-          </b-form-group>
-        </b-col>
-
-        <b-col>
-          <b-form-group label="Client Phone">
-            <b-form-input v-model="filters.clientPhone" @change="filterResults"></b-form-input>
-          </b-form-group>
-        </b-col>
-      </b-row>
-    </b-card>
-    
-    <b-card title="Order History">
-      <b-table responsive :items="ordersData" :fields="fields">
-        <template v-slot:cell(total_price)="data">
-          {{ data.item.total_price }} {{ data.item.currency }}
-        </template>
+    <template v-if="! isLoading">
+      <b-alert :show="rows < 1">There are no orders yet!</b-alert>
+      
+      <b-card class="mb-4" sub-title="Filter">
+        <b-row>
+          <b-col>
+            <b-form-group label="Client Name">
+              <b-form-input v-model="filters.clientName" @change="filterResults"></b-form-input>
+            </b-form-group>
+          </b-col>
   
-        <template v-slot:cell(actions)="data">
-          <router-link :to="'orders/' + data.item.id" class="btn btn-info">Show</router-link>
+          <b-col>
+            <b-form-group label="Client Phone">
+              <b-form-input v-model="filters.clientPhone" @change="filterResults"></b-form-input>
+            </b-form-group>
+          </b-col>
+        </b-row>
+      </b-card>
+      
+      <b-card title="Order History">
+        <b-table responsive :items="ordersData" :fields="fields">
+          <template v-slot:cell(total_price)="data">
+            {{ data.item.total_price }} {{ data.item.currency }}
+          </template>
+    
+          <template v-slot:cell(actions)="data">
+            <router-link :to="'orders/' + data.item.id" class="btn btn-info">Show</router-link>
+          </template>
+        </b-table>
+  
+        <template v-slot:footer>
+          <b-pagination
+            pills align="center"
+            v-model="currentPage"
+            :total-rows="rows"
+            :per-page="perPage"
+            @change="changePage"
+          ></b-pagination>
         </template>
-      </b-table>
+      </b-card>
+    </template>
 
-      <template v-slot:footer>
-        <b-pagination
-          pills align="center"
-          v-model="currentPage"
-          :total-rows="rows"
-          :per-page="perPage"
-          @change="changePage"
-        ></b-pagination>
-      </template>
-    </b-card>
+    <p v-else class="text-warning">Loading...</p>
   </b-container>
 </template>
 
@@ -97,6 +101,10 @@ export default {
 
     ordersData() {
       return this.$store.getters.orders.data
+    },
+
+    isLoading() {
+      return this.$store.getters.isLoading
     }
   }
 }

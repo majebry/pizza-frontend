@@ -21,7 +21,8 @@ const store = new Vuex.Store({
     deliveryCost: 0,
     orders: [],
     order: {},
-    checkoutLoading: false
+    checkoutLoading: false,
+    isLoading: false
   },
 
   mutations: {
@@ -111,11 +112,17 @@ const store = new Vuex.Store({
 
     SET_CHECKOUT_LOADING(state, value) {
       state.checkoutLoading = value
+    },
+
+    SET_LOADING(state,value) {
+      state.isLoading = value
     }
   },
 
   actions: {
     async onLoadPizzas({commit}, params) {
+      commit('SET_LOADING', true)
+
       await Vue.axios.get('pizzas', { params })
         .then(response => {
           commit('SET_PIZZAS', response.data)
@@ -125,6 +132,8 @@ const store = new Vuex.Store({
         .catch(() => {
           //
         })
+
+      commit('SET_LOADING', false)
     },
 
     onUpdateInCart({commit}, updatedCartItem) {
@@ -209,6 +218,8 @@ const store = new Vuex.Store({
     },
 
     async onLoadOrders({commit}, params) {
+      commit('SET_LOADING', true)
+      
       await Vue.axios.get('orders', { 
         params,
         headers: {
@@ -218,9 +229,13 @@ const store = new Vuex.Store({
         .then(response => {
           commit('SET_ORDERS', response.data)
         })
+
+      commit('SET_LOADING', false)
     },
 
     async onLoadOrder({commit}, id) {
+      commit('SET_LOADING', true)
+
       await Vue.axios.get('orders/' + id, {
         headers: {
           Authorization: 'Bearer ' + Cookies.get('token')
@@ -229,6 +244,8 @@ const store = new Vuex.Store({
         .then(response => {
           commit('SET_ORDER', response.data)
         })
+
+      commit('SET_LOADING', false)
     }
   },
 
@@ -297,6 +314,10 @@ const store = new Vuex.Store({
 
     checkoutLoading: state => {
       return state.checkoutLoading
+    },
+
+    isLoading: state => {
+      return state.isLoading
     }
   }
 });

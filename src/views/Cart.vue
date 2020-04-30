@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <b-card title="Cart">
+    <b-card title="Cart" v-if="! isLoading">
       <b-card-body>
         <b-table responsive v-if="pizzas.length" :items="pizzas" :fields="fields">
           <template v-slot:cell(image)="data">
@@ -45,6 +45,8 @@
         </div>
       </template>
     </b-card>
+
+    <p v-else class="text-warning">Loading...</p>
 
     <CheckoutModal></CheckoutModal>
   </b-container>
@@ -123,6 +125,10 @@ export default {
 
     deliveryCost() {
       return this.$store.getters.deliveryCost
+    },
+
+    isLoading() {
+      return this.$store.getters.isLoading
     }
   }
 }
